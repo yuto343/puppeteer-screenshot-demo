@@ -1,0 +1,10 @@
+{
+  "name": "puppeteer-screenshot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "screenshot": "node index.mjs"
+  },
+  "license": "ISC"
+}
