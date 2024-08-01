@@ -4,7 +4,7 @@ import path from "path";
 
 const takeScreenshots = async (urls) => {
   // 1.先に保存先フォルダを作成
-  const formattedDate = getFormattedDate();
+  const formattedDate = getFormattedDate(new Date());
   const dirPath = path.join("screenshots", formattedDate);
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
@@ -33,8 +33,7 @@ const takeScreenshots = async (urls) => {
 };
 
 // フォルダ名に使用する日付を作る関数
-const getFormattedDate = () => {
-  const date = new Date();
+const getFormattedDate = (date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // 月は0から始まるので+1
   const day = String(date.getDate()).padStart(2, "0");
