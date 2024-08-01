@@ -6,5 +6,8 @@
   "scripts": {
     "screenshot": "node index.mjs"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^22.15.0"
+  }
 }
