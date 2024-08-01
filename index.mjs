@@ -38,7 +38,7 @@ const takeScreenshot = async (url, buttonText) => {
   await delay(1 * 1000); // フォームが開くアニメーション終了まで1秒まつ
   const urlPath = url.replace(/https?:\/\//, "").replace(/[\/:]/g, "_");
   const filePath = path.join(dirPath, `${urlPath}.png`);
-  await page.screenshot({ path: filePath });
+  await page.screenshot({ path: filePath, fullPage: true });
 
   // 4.ブラウザを閉じる
   await page.close();
