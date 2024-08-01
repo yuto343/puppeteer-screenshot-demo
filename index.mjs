@@ -2,7 +2,11 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
 
-const takeScreenshots = async (urls) => {
+const URL =
+  "https://373cdb0--63d0ccabb5d2dd29825524ab.chromatic.com/iframe.html?id=dialog%EF%BC%88%E3%83%80%E3%82%A4%E3%82%A2%E3%83%AD%E3%82%B0%EF%BC%89-dialog--form-dialog&viewMode=story";
+const BUTTONTEXT = "FormDialog";
+
+const takeScreenshot = async (url, buttonText) => {
   // 1.先に保存先フォルダを作成
   const formattedDate = getFormattedDate(new Date());
   const dirPath = path.join("screenshots", formattedDate);
@@ -14,21 +18,30 @@ const takeScreenshots = async (urls) => {
   const browser = await puppeteer.launch();
 
   // 3.指定されたURLのスクリーンショットを取得
-  for (const url of urls) {
-    // 新しいページを作成
-    const page = await browser.newPage();
-    // 指定されたURLに移動
-    await page.goto(url);
+  // a.新しいページを作成
+  const page = await browser.newPage();
+  await page.goto(url);
 
-    // ファイル名として使うため、URLからhttps://や/を削除して_に変換
-    const urlPath = url.replace(/https?:\/\//, "").replace(/[\/:]/g, "_");
+  // b.ボタンをクリックしてフォームを開く
+  await page.evaluate((buttonText) => {
+    const buttons = Array.from(document.querySelectorAll("button"));
+    const targetButton = buttons.find((button) =>
+      button.textContent.includes(buttonText)
+    );
+    if (targetButton) {
+      targetButton.click();
+      return;
+    }
+  }, buttonText);
 
-    const filePath = path.join(dirPath, `${urlPath}.png`);
-    await page.screenshot({ path: filePath });
-    await page.close();
-  }
+  // c.スクリーンショットの撮影
+  await delay(1 * 1000); // フォームが開くアニメーション終了まで1秒まつ
+  const urlPath = url.replace(/https?:\/\//, "").replace(/[\/:]/g, "_");
+  const filePath = path.join(dirPath, `${urlPath}.png`);
+  await page.screenshot({ path: filePath });
 
   // 4.ブラウザを閉じる
+  await page.close();
   await browser.close();
 };
 
@@ -43,15 +56,9 @@ const getFormattedDate = (date) => {
   return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
 };
 
-// URLsをファイルから読み込む関数
-const readUrlsFromFile = (filePath) => {
-  const urls = fs.readFileSync(filePath, "utf-8").split("\n").filter(Boolean);
-  return urls;
+// 一定時間待機する関数
+const delay = (time) => {
+  return new Promise((resolve) => setTimeout(resolve, time));
 };
 
-// URLsファイルのパス
-const urlsFilePath = "urls.txt";
-
-// URLsを読み込んでスクリーンショットを撮る
-const urls = readUrlsFromFile(urlsFilePath);
-takeScreenshots(urls);
+takeScreenshot(URL, BUTTONTEXT);
