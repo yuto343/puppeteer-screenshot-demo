@@ -24,7 +24,7 @@ const takeScreenshots = async (urls) => {
     const urlPath = url.replace(/https?:\/\//, "").replace(/[\/:]/g, "_");
 
     const filePath = path.join(dirPath, `${urlPath}.png`);
-    await page.screenshot({ path: filePath });
+    await page.screenshot({ path: filePath, fullPage: true });
     await page.close();
   }
 
